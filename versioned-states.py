@@ -39,7 +39,7 @@ def func_summarize():
     text_summary.delete('1.0', tkinter.END)
     text_summary.insert(
         tkinter.END,
-        f'there are {len(descriptions) if descriptions is not None else 0} descriptions\n'
+        f'there are {len(descriptions) if descriptions is not None else 0} descriptions\n\n'
     )
     if states is None:
         text_summary.insert(tkinter.END, 'null')
@@ -95,7 +95,9 @@ def func_read_version():
 
 def func_load():
     global states
-    states = json.loads(open(tkinter.filedialog.askopenfilename()).read())
+    states = json.loads(
+        open(tkinter.filedialog.askopenfilename(filetypes=[('JSON',
+                                                            '.json')])).read())
     func_summarize()
 
 
@@ -136,7 +138,8 @@ def func_export():
 
 def func_load_description():
     global descriptions
-    with open(tkinter.filedialog.askopenfilename(), 'r') as fi:
+    with open(tkinter.filedialog.askopenfilename(filetypes=[('CSV', '.csv')]),
+              'r') as fi:
         reader = csv.DictReader(fi)
         rows = tuple(row for row in reader)
         assert all('item' in row and 'description' in row
