@@ -45,7 +45,7 @@ def func_summarize():
     else:
         all_states = set(states[version][name] for version in states
                          for name in states[version])
-        for version in states:
+        for version in sorted(list(states.keys())):
             text_summary.insert(
                 tkinter.END, f'version {version}\n' + ', '.join(
                     f'{s}:{len(tuple(i for i in states[version] if states[version][i] == s))}'
@@ -110,7 +110,7 @@ def func_export():
                 fs,
                 fieldnames=['item'] +
                 ([] if descriptions is None else ['description']) +
-                list(states.keys()))
+                sorted(list(states.keys())))
             writer.writeheader()
             for name in all_names:
                 row = {'item': name}
