@@ -10,6 +10,7 @@ kHeightButton = 3
 kWidthText = 80
 kHeightText = 20
 
+last_states = None
 states = None
 inputs = None
 descriptions = None
@@ -54,7 +55,7 @@ def func_summarize():
 
 
 def func_add():
-    global states
+    global states, last_states
     version = func_read_version()
     state = func_read_state()
     condition = {
@@ -63,6 +64,8 @@ def func_add():
         'inputs': inputs is not None
     }
     if all(c for c in condition.values()):
+        # backup
+        last_states = None if states is None else dict(states)
         if states is None:
             states = {}
         if version not in states:
@@ -73,6 +76,12 @@ def func_add():
                           if not condition[c])
         tkinter.messagebox.showerror('', cause)
 
+    func_summarize()
+
+
+def func_back():
+    global states
+    states = None if last_states is None else dict(last_states)
     func_summarize()
 
 
@@ -206,6 +215,14 @@ tkinter.Button(frame_buttons,
                command=func_add).pack(side=tkinter.TOP,
                                       expand=tkinter.YES,
                                       fill=tkinter.BOTH)
+
+tkinter.Button(frame_buttons,
+               height=kHeightButton,
+               width=kWidthButton,
+               text='back',
+               command=func_back).pack(side=tkinter.TOP,
+                                       expand=tkinter.YES,
+                                       fill=tkinter.BOTH)
 
 tkinter.Button(frame_buttons,
                height=kHeightButton,

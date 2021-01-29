@@ -16,6 +16,8 @@ a confirmation is available in *confirmation input* textfield; the items are sep
 
 - **add** add the parsed items to project with version and state in corresponding textfields
 
+- **back** go back to states before add; only one step is remembered
+
 - **load desc** load optional descriptions for the items, then it will be part of the exported report; descriptions must be csv file with *item* and *description* columns
 
 - **export** export the report in csv file; with simple find-replace, Calc or Excel can give intuitive colored table
