@@ -2,32 +2,27 @@ import tkinter
 import tkinter.ttk
 import tkinter.messagebox
 import tkinter.filedialog
-import json
-import csv
+
+import versioned_states_engine
 
 kWidthButton = 20
 kHeightButton = 3
 kWidthText = 80
 kHeightText = 20
 
-last_states = None
-states = None
-inputs = None
-descriptions = None
+gEngine = versioned_states_engine.VersionedStatesEngine()
 
 
 def func_input():
-    global inputs
-    inputs = tuple(i.strip()
-                   for i in text_input.get('1.0', tkinter.END).replace(
-                       '\n', ',').strip().split(',') if bool(i.strip()))
+    gEngine.input(text_input.get('1.0', tkinter.END))
     func_display_input()
 
 
 def func_display_input():
     text_display.config(state='normal')
     text_display.delete('1.0', tkinter.END)
-    if input is not None:
+    inputs = gEngine.get_input()
+    if inputs is not None:
         text_display.insert(
             tkinter.END, f'add {len(inputs)} new objects:\n' +
             ', '.join(str(i) for i in inputs))
@@ -35,6 +30,8 @@ def func_display_input():
 
 
 def func_summarize():
+    descriptions = gEngine.get_descriptions()
+    states = gEngine.get_states()
     text_summary.config(state='normal')
     text_summary.delete('1.0', tkinter.END)
     text_summary.insert(
@@ -55,33 +52,24 @@ def func_summarize():
 
 
 def func_add():
-    global states, last_states
     version = func_read_version()
     state = func_read_state()
     condition = {
         'state': bool(state),
         'version': bool(version),
-        'inputs': inputs is not None
+        'inputs': gEngine.get_input() is not None
     }
     if all(c for c in condition.values()):
-        # backup
-        last_states = None if states is None else dict(states)
-        if states is None:
-            states = {}
-        if version not in states:
-            states[version] = {}
-        states[version].update({i: state for i in inputs})
+        gEngine.add(version=version, state=state)
+        func_summarize()
     else:
         cause = ', '.join(f'invalid {c}' for c in condition
                           if not condition[c])
         tkinter.messagebox.showerror('', cause)
 
-    func_summarize()
-
 
 def func_back():
-    global states
-    states = None if last_states is None else dict(last_states)
+    gEngine.back()
     func_summarize()
 
 
@@ -94,61 +82,36 @@ def func_read_version():
 
 
 def func_load():
-    global states
-    states = json.loads(
-        open(tkinter.filedialog.askopenfilename(filetypes=[('JSON',
-                                                            '.json')])).read())
-    func_summarize()
+    filename = tkinter.filedialog.askopenfilename(filetypes=[('JSON',
+                                                              '.json')])
+    if bool(filename):
+        gEngine.load(filename)
+        func_summarize()
 
 
 def func_save():
-    if states is not None:
+    if gEngine.get_states() is not None:
         filename = tkinter.filedialog.asksaveasfilename()
-        filename = filename if filename.endswith(
-            '.json') else filename + '.json'
-        with open(filename, 'w') as fs:
-            fs.write(json.dumps(states, indent=' '))
+        if bool(filename):
+            filename = filename if filename.endswith(
+                '.json') else filename + '.json'
+            gEngine.save(filename)
 
 
 def func_export():
-    if states is not None:
-        all_names = sorted(
-            list(set(name for version in states for name in states[version])))
+    if gEngine.get_states() is not None:
         filename = tkinter.filedialog.asksaveasfilename()
-        filename = filename if filename.endswith('.csv') else filename + '.csv'
-        with open(filename, 'w', newline='') as fs:
-            writer = csv.DictWriter(
-                fs,
-                fieldnames=['item'] +
-                ([] if descriptions is None else ['description']) +
-                sorted(list(states.keys())))
-            writer.writeheader()
-            for name in all_names:
-                row = {'item': name}
-                if descriptions is not None:
-                    row['description'] = descriptions[
-                        name] if name in descriptions else ''
-                row.update({version: '' for version in states})
-                row.update({
-                    version: states[version][name]
-                    for version in states if name in states[version]
-                })
-                writer.writerow(row)
+        if bool(filename):
+            filename = filename if filename.endswith(
+                '.csv') else filename + '.csv'
+            gEngine.export(filename)
 
 
 def func_load_description():
-    global descriptions
-    with open(tkinter.filedialog.askopenfilename(filetypes=[('CSV', '.csv')]),
-              'r') as fi:
-        reader = csv.DictReader(fi)
-        rows = tuple(row for row in reader)
-        assert all('item' in row and 'description' in row
-                   for row in rows), 'invalid description'
-        assert len(set(row['item']
-                       for row in rows)) == len(rows), 'duplicate description'
-        descriptions = {row['item']: row['description'] for row in rows}
-
-    func_summarize()
+    filename = tkinter.filedialog.askopenfilename(filetypes=[('CSV', '.csv')])
+    if bool(filename):
+        gEngine.load_description(filename)
+        func_summarize()
 
 
 root = tkinter.Tk()
