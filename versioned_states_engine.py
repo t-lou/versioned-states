@@ -221,4 +221,22 @@ case03,desc3,failed,passed
 case04,desc4,,passed
 ''')
 
+            # test back
+            engine.back()
+            self.assertEqual(engine.get_states(), {
+                'v1': {
+                    'case01': 'passed',
+                    'case02': 'failed',
+                    'case03': 'failed'
+                }
+            })
+            engine.back()
+            self.assertEqual(engine.get_states(), {
+                'v1': {
+                    'case01': 'passed',
+                    'case02': 'failed',
+                    'case03': 'failed'
+                }
+            })  # further back is invalid
+
     unittest.main()
