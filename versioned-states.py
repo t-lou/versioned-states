@@ -24,8 +24,8 @@ def func_display_input():
     inputs = gEngine.get_input()
     if inputs is not None:
         text_display.insert(
-            tkinter.END, f'add {len(inputs)} new objects:\n' +
-            ', '.join(str(i) for i in inputs))
+            tkinter.END, f'add {len(inputs)} new objects:\n' + ', '.join(
+                str(i) for i in inputs))
     text_display.config(state='disabled')
 
 
@@ -63,8 +63,8 @@ def func_add():
         gEngine.add(version=version, state=state)
         func_summarize()
     else:
-        cause = ', '.join(f'invalid {c}' for c in condition
-                          if not condition[c])
+        cause = ', '.join(
+            f'invalid {c}' for c in condition if not condition[c])
         tkinter.messagebox.showerror('', cause)
 
 
@@ -126,15 +126,11 @@ text_state = tkinter.Text(frame_texts, width=kWidthText, height=2)
 
 text_version = tkinter.Text(frame_texts, width=kWidthText, height=2)
 
-text_display = tkinter.Text(frame_texts,
-                            width=kWidthText,
-                            height=kHeightText,
-                            state=tkinter.DISABLED)
+text_display = tkinter.Text(
+    frame_texts, width=kWidthText, height=kHeightText, state=tkinter.DISABLED)
 
-text_summary = tkinter.Text(frame_texts,
-                            width=kWidthText,
-                            height=kHeightText,
-                            state=tkinter.DISABLED)
+text_summary = tkinter.Text(
+    frame_texts, width=kWidthText, height=kHeightText, state=tkinter.DISABLED)
 
 tkinter.Label(frame_texts, text='input').pack(side=tkinter.TOP)
 text_input.pack(side=tkinter.TOP, expand=tkinter.YES, fill=tkinter.BOTH)
@@ -150,61 +146,61 @@ text_summary.pack(side=tkinter.TOP, expand=tkinter.YES, fill=tkinter.BOTH)
 text_display.bind('<1>', lambda event: text_display.focus_set())
 text_summary.bind('<1>', lambda event: text_summary.focus_set())
 
-tkinter.Button(frame_buttons,
-               height=kHeightButton,
-               width=kWidthButton,
-               text='load',
-               command=func_load).pack(side=tkinter.TOP,
-                                       expand=tkinter.YES,
-                                       fill=tkinter.BOTH)
+tkinter.Button(
+    frame_buttons,
+    height=kHeightButton,
+    width=kWidthButton,
+    text='load',
+    command=func_load).pack(
+        side=tkinter.TOP, expand=tkinter.YES, fill=tkinter.BOTH)
 
-tkinter.Button(frame_buttons,
-               height=kHeightButton,
-               width=kWidthButton,
-               text='save',
-               command=func_save).pack(side=tkinter.TOP,
-                                       expand=tkinter.YES,
-                                       fill=tkinter.BOTH)
+tkinter.Button(
+    frame_buttons,
+    height=kHeightButton,
+    width=kWidthButton,
+    text='save',
+    command=func_save).pack(
+        side=tkinter.TOP, expand=tkinter.YES, fill=tkinter.BOTH)
 
-tkinter.Button(frame_buttons,
-               height=kHeightButton,
-               width=kWidthButton,
-               text='input',
-               command=func_input).pack(side=tkinter.TOP,
-                                        expand=tkinter.YES,
-                                        fill=tkinter.BOTH)
+tkinter.Button(
+    frame_buttons,
+    height=kHeightButton,
+    width=kWidthButton,
+    text='input',
+    command=func_input).pack(
+        side=tkinter.TOP, expand=tkinter.YES, fill=tkinter.BOTH)
 
-tkinter.Button(frame_buttons,
-               height=kHeightButton,
-               width=kWidthButton,
-               text='add',
-               command=func_add).pack(side=tkinter.TOP,
-                                      expand=tkinter.YES,
-                                      fill=tkinter.BOTH)
+tkinter.Button(
+    frame_buttons,
+    height=kHeightButton,
+    width=kWidthButton,
+    text='add',
+    command=func_add).pack(
+        side=tkinter.TOP, expand=tkinter.YES, fill=tkinter.BOTH)
 
-tkinter.Button(frame_buttons,
-               height=kHeightButton,
-               width=kWidthButton,
-               text='back',
-               command=func_back).pack(side=tkinter.TOP,
-                                       expand=tkinter.YES,
-                                       fill=tkinter.BOTH)
+tkinter.Button(
+    frame_buttons,
+    height=kHeightButton,
+    width=kWidthButton,
+    text='back',
+    command=func_back).pack(
+        side=tkinter.TOP, expand=tkinter.YES, fill=tkinter.BOTH)
 
-tkinter.Button(frame_buttons,
-               height=kHeightButton,
-               width=kWidthButton,
-               text='load desc',
-               command=func_load_description).pack(side=tkinter.TOP,
-                                                   expand=tkinter.YES,
-                                                   fill=tkinter.BOTH)
+tkinter.Button(
+    frame_buttons,
+    height=kHeightButton,
+    width=kWidthButton,
+    text='load desc',
+    command=func_load_description).pack(
+        side=tkinter.TOP, expand=tkinter.YES, fill=tkinter.BOTH)
 
-tkinter.Button(frame_buttons,
-               height=kHeightButton,
-               width=kWidthButton,
-               text='export',
-               command=func_export).pack(side=tkinter.TOP,
-                                         expand=tkinter.YES,
-                                         fill=tkinter.BOTH)
+tkinter.Button(
+    frame_buttons,
+    height=kHeightButton,
+    width=kWidthButton,
+    text='export',
+    command=func_export).pack(
+        side=tkinter.TOP, expand=tkinter.YES, fill=tkinter.BOTH)
 
 frame_texts.pack(side=tkinter.LEFT, expand=tkinter.YES, fill=tkinter.BOTH)
 frame_buttons.pack(side=tkinter.LEFT, expand=tkinter.YES, fill=tkinter.BOTH)

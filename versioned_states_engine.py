@@ -22,12 +22,12 @@ class VersionedStatesEngine(object):
         self._states = None if self._last_states is None else dict(
             self._last_states)
 
-    def input(self, input_text=str):
+    def input(self, input_text: str):
         self._inputs = set(
             i.strip() for i in input_text.replace('\n', ',').strip().split(',')
             if bool(i.strip()))
 
-    def add(self, version=str, state=str):
+    def add(self, version: str, state: str):
         # backup
         self._last_states = None if self._states is None else dict(
             self._states)
@@ -37,16 +37,16 @@ class VersionedStatesEngine(object):
             self._states[version] = {}
         self._states[version].update({i: state for i in self._inputs})
 
-    def load(self, filename=str):
+    def load(self, filename: str):
         with open(filename) as fs:
             self._states = json.loads(fs.read())
 
-    def save(self, filename=str):
+    def save(self, filename: str):
         if self._states is not None:
             with open(filename, 'w') as fs:
                 fs.write(json.dumps(self._states, indent=' '))
 
-    def export(self, filename=str):
+    def export(self, filename: str):
         if self._states is not None:
             all_names = sorted(
                 list(
@@ -72,7 +72,7 @@ class VersionedStatesEngine(object):
                     })
                     writer.writerow(row)
 
-    def load_description(self, filename=str):
+    def load_description(self, filename: str):
         with open(filename, 'r') as fi:
             reader = csv.DictReader(fi)
             rows = tuple(row for row in reader)
@@ -81,10 +81,15 @@ class VersionedStatesEngine(object):
             assert len(set(
                 row['item']
                 for row in rows)) == len(rows), 'duplicate description'
-            self._descriptions = {
-                row['item']: row['description']
-                for row in rows
-            }
+            if self._descriptions is None:
+                self._descriptions = {
+                    row['item']: row['description']
+                    for row in rows
+                }
+            else:
+                self._descriptions.update(
+                    {row['item']: row['description']
+                     for row in rows})
 
 
 if __name__ == '__main__':
@@ -191,8 +196,8 @@ case04,desc4
             engine.save('test_states_from_case.json')
             with open('test_states.json') as fs1:
                 with open('test_states_from_case.json') as fs2:
-                    self.assertEqual(json.loads(fs1.read()),
-                                     json.loads(fs2.read()))
+                    self.assertEqual(
+                        json.loads(fs1.read()), json.loads(fs2.read()))
 
             # test export
             engine.export('test_export.csv')
